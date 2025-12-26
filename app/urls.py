@@ -35,14 +35,14 @@ urlpatterns = [
     # path('approved-donors/', views.approved_donors, name='approved_donors'),
 
     path('charity-requests/', views.charity_requests_list, name='charity_requests_list'),
-    path('approve-charity/<int:pk>/', views.approve_charity, name='approve_charity'),
-    path('reject-charity/<int:pk>/', views.reject_charity, name='reject_charity'),
+    path('apply_charity/<int:pk>/', views.apply_charity, name='approve_charity'),
+    path('reject-charity/<int:pk>/', views.reject_charity_app, name='reject_charity'),
     path('charity-apply/', views.charity_application, name='charity_application'),
-    path('approved-charities/', views.approved_charities, name='approved_charities'),
-    path('charity-applications/', views.charity_applications_list, name='charity_applications_list'),
-    path('approve-charity/<int:pk>/', views.approve_charity, name='approve_charity'),
-    path('reject-charity/<int:pk>/', views.reject_charity, name='reject_charity'),
-    path('approved-charities/', views.approved_charities, name='approved_charities'),
+    path('approved-charities/', views.approve_charity_app, name='approved_charities'),
+    path('charity-applications/', views.charity_application, name='charity_applications_list'),
+    path('approve-charity/<int:pk>/', views.apply_charity, name='approve_charity'),
+    path('reject-charity/<int:pk>/', views.reject_charity_app, name='reject_charity'),
+    path('approved-charities/', views.approve_charity_app, name='approved_charities'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
 
 # Donor actions
@@ -57,7 +57,8 @@ urlpatterns = [
     path('approve-charity-app/<int:pk>/', views.approve_charity_app, name='approve_charity_app'),
     path('reject-charity-app/<int:pk>/', views.reject_charity_app, name='reject_charity_app'),
 
-
+#product list
+    path('product_list/',views.product_list,name='product_list')
 
 ]
 

@@ -255,3 +255,10 @@ def reject_donor(request, pk):
     donor.delete()
     messages.error(request, f"{donor.name}'s donor application rejected.")
     return redirect("admin_dashboard")
+
+def charity_requests_list(request):
+    pass
+
+
+def product_list(request):
+    return render(request,"shopping/product_list.html")
