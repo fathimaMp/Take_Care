@@ -93,3 +93,15 @@ class CharityApplicationForm(forms.ModelForm):
     class Meta:
         model = CharityApplication
         fields = ['name', 'email', 'phone', 'address', 'photo']
+
+
+#E-Commerce Module
+
+from django import forms
+from .models import Product
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'price', 'description', 'image', 'stock']
+  

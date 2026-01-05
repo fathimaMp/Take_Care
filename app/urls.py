@@ -14,7 +14,7 @@ urlpatterns = [
     
     # Registration and Login
     path('register/', views.registration, name="registration"),
-    path('user_reg/', views.user_reg, name="user_reg"),
+    path('user_reg/', views.user_reg, name="normal_user_page"),
     path('charity_user_reg/', views.charity_user_reg, name="charity_user_reg"),
     path('seller_reg/', views.seller_reg, name="seller_reg"),
     path('login/', views.CustomLoginView.as_view(), name='login'),
@@ -57,8 +57,12 @@ urlpatterns = [
     path('approve-charity-app/<int:pk>/', views.approve_charity_app, name='approve_charity_app'),
     path('reject-charity-app/<int:pk>/', views.reject_charity_app, name='reject_charity_app'),
 
-#product list
-    path('product_list/',views.product_list,name='product_list')
+
+#E-Commerce Module
+    path('product_list/',views.product_list,name='product_list'),
+    path('add_product/', views.add_product, name='add_product'),
+
+
 
 ]
 

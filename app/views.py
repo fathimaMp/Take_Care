@@ -105,6 +105,7 @@ class CustomLoginView(LoginView):
         elif user.user_type == CustomUser.NORMAL:
             return reverse_lazy('normal_user_page')
         elif user.user_type == CustomUser.CHARITY:
+            
             return reverse_lazy('charity_page')
         return reverse_lazy('navbar')
 
@@ -260,5 +261,30 @@ def charity_requests_list(request):
     pass
 
 
+#E-Commerce Module
+
 def product_list(request):
     return render(request,"shopping/product_list.html")
+
+
+from django.shortcuts import render, redirect
+from .forms import ProductForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')
+    else:
+        form = ProductForm()
+
+    return render(request, 'shopping/add_product.html', {'form': form})
+
+@login_required
+def add_product(request):
+    if not request.user.is_staff:
+        return redirect('product_list')
+
