@@ -276,15 +276,15 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            product = form.save(commit=False)
+            product.created_by = request.user   # 👈 who added
+            product.save()
             return redirect('product_list')
     else:
         form = ProductForm()
-
     return render(request, 'shopping/add_product.html', {'form': form})
 
-@login_required
-def add_product(request):
     if not request.user.is_staff:
-        return redirect('product_list')
+        return redirect('home')
+
 
