@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     # Home and Navigation
     path('', views.home, name="home"),
@@ -60,10 +61,13 @@ urlpatterns = [
 
 #E-Commerce Module
     path('product_list/',views.product_list,name='product_list'),
-    path('add_product/', views.add_product, name='add_product'),
+    path('become-seller/', views.become_seller, name='become_seller'),
+    path('dashboard/', views.seller_dashboard, name='seller_dashboard'),
 
-
-
+    path('add-product/', views.add_product, name='add_product'),
+    
+    path('my-products/', views.my_products, name='my_products'),
 ]
+
 
 

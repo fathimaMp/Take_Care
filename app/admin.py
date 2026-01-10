@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, CharityApplication  # <-- import from your models
+from .models import CustomUser, CharityApplication,Product  # <-- import from your models
 
 # --- Custom User Admin ---
 class CustomUserAdmin(UserAdmin):
@@ -30,3 +30,5 @@ class CharityApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'phone', 'is_approved')
     list_filter = ('is_approved',)
     search_fields = ('name', 'email', 'phone')
+
+admin.site.register(Product)

@@ -1,0 +1,174 @@
+<style>
+  :root {
+    --hc-primary: #0077b6;      /* Main Medical Blue */
+    --hc-secondary: #f0f7ff;    /* Light Blue Background */
+    --hc-accent: #023e8a;       /* Deep Navy */
+    --hc-text: #1e293b;
+    --hc-border: #cbdceb;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--hc-secondary);
+    color: var(--hc-text);
+  }
+
+  /* --- NAVBAR --- */
+  .hc-navbar {
+    background: var(--hc-accent);
+    padding: 0 25px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+  }
+
+  .nav-logo {
+    width: 34px;
+    height: 34px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--hc-accent);
+    font-weight: bold;
+    font-size: 22px;
+  }
+
+  /* --- DASHBOARD CONTENT --- */
+  .container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 0 20px;
+  }
+
+  .dashboard-header {
+    margin-bottom: 30px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 1.8rem;
+    color: var(--hc-accent);
+    margin: 0;
+  }
+
+  .dashboard-header p {
+    color: #64748b;
+    margin: 5px 0 0;
+  }
+
+  /* Grid for Action Cards */
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+  }
+
+  .action-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--hc-border);
+    padding: 30px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 50, 100, 0.04);
+  }
+
+  .action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 50, 100, 0.08);
+    border-color: var(--hc-primary);
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--hc-secondary);
+    color: var(--hc-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .action-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--hc-accent);
+    font-size: 1.2rem;
+  }
+
+  .action-card p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* Visual "Go" arrow */
+  .card-footer {
+    margin-top: 20px;
+    color: var(--hc-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+</style>
+
+<nav class="hc-navbar">
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">+</div>
+    <span>MED-Portal</span>
+  </a>
+  <div style="color: white; font-size: 0.85rem;">
+    Dashboard Access: <strong>Seller Panel</strong>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="dashboard-header">
+    <h2>Seller Management Console</h2>
+    <p>Manage your medical supplies, track inventory, and register new stock.</p>
+  </div>
+
+  <div class="action-grid">
+    <a href="{% url 'add_product' %}" class="action-card">
+      <div class="card-icon">➕</div>
+      <h3>Add New Product</h3>
+      <p>Register new medicine, medical equipment, or clinical supplies to the database.</p>
+      <div class="card-footer">Open Intake Form →</div>
+    </a>
+
+    <a href="{% url 'my_products' %}" class="action-card">
+      <div class="card-icon">📋</div>
+      <h3>My Product Catalog</h3>
+      <p>View, edit, and update the stock levels of items currently assigned to you.</p>
+      <div class="card-footer">View Inventory →</div>
+    </a>
+
+    <div class="action-card" style="opacity: 0.7; cursor: not-allowed;">
+      <div class="card-icon">📊</div>
+      <h3>Sales Analytics</h3>
+      <p>View distribution reports and monthly stock movement (Coming Soon).</p>
+      <div class="card-footer" style="color: #94a3b8;">Restricted Access</div>
+    </div>
+  </div>
+</div>

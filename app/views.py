@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout as auth_logout
 from django.contrib import messages
+from app.models import CustomUser
+
+
 from .models import (
     CustomUser, CharityOption, CharityDonor, DonorApplication,
     CharityRequest, CharityApplication
@@ -267,24 +270,93 @@ def product_list(request):
     return render(request,"shopping/product_list.html")
 
 
+# from django.shortcuts import render, redirect
+# from .forms import ProductForm
+# from django.contrib.auth.decorators import login_required
+
+# @login_required
+# def add_product(request):
+#     if request.method == 'POST':
+#         form = ProductForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             product = form.save(commit=False)
+#             product.created_by = request.SELLER   # 👈 who added
+#             product.save()
+#             return redirect('product_list')
+#     else:
+#         form = ProductForm()
+#     return render(request, 'shopping/add_product.html', {'form': form})
+
+#     if not request.user.is_staff:
+#         return redirect('home')
+
 from django.shortcuts import render, redirect
-from .forms import ProductForm
 from django.contrib.auth.decorators import login_required
 
 @login_required
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            product = form.save(commit=False)
-            product.created_by = request.user   # 👈 who added
-            product.save()
-            return redirect('product_list')
-    else:
-        form = ProductForm()
-    return render(request, 'shopping/add_product.html', {'form': form})
+def become_seller(request):
+    if request.user.user_type == CustomUser.SELLER:
+        return redirect('seller_dashboard')
 
-    if not request.user.is_staff:
+    if request.method == 'POST':
+        request.user.user_type = CustomUser.SELLER
+        request.user.save()
+        return redirect('seller_dashboard')
+
+    return render(request, 'seller/become_seller.html')
+
+@login_required
+def seller_dashboard(request):
+    if request.user.user_type != CustomUser.SELLER:
         return redirect('home')
 
+    return render(request, 'seller/dashboard.html')
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Product
+
+@login_required
+def add_product(request):
+    if request.user.user_type != CustomUser.SELLER:
+        return redirect('home')
+
+    if request.method == 'POST':
+        Product.objects.create(
+            name=request.POST.get('name'),
+            price=request.POST.get('price'),
+            description=request.POST.get('description'),
+            stock=request.POST.get('stock'),
+            image=request.FILES.get('image'),
+            created_by=request.user
+        )
+        return redirect('seller_dashboard')
+
+    return render(request, 'seller/add_product.html')
+
+@login_required
+def my_products(request):
+    if request.user.user_type != CustomUser.SELLER:
+        return redirect('home')
+
+    products = Product.objects.filter(created_by=request.user)
+    return render(request, 'seller/my_products.html', {'products': products})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Product
+from .forms import ProductForm # Assuming you use a ModelForm
+
+def edit_product(request, pk):
+    # Fetch the specific product or return 404
+    product = get_object_or_404(Product, pk=pk, seller=request.user)
+    
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_value():
+            form.save()
+            return redirect('my_products')
+    else:
+        form = ProductForm(instance=product)
+        
+    return render(request, 'add_product.html', {'form': form, 'edit_mode': True})
