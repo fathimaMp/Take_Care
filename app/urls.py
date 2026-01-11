@@ -63,10 +63,10 @@ urlpatterns = [
     path('product_list/',views.product_list,name='product_list'),
     path('become-seller/', views.become_seller, name='become_seller'),
     path('dashboard/', views.seller_dashboard, name='seller_dashboard'),
-
     path('add-product/', views.add_product, name='add_product'),
-    
     path('my-products/', views.my_products, name='my_products'),
+    path('seller/product/edit/<int:product_id>/', views.edit_product, name='edit_product'),
+    path('seller/product/delete/<int:product_id>/', views.delete_product, name='delete_product'),
 ]
 
 

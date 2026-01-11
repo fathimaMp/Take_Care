@@ -1,0 +1,258 @@
+<style>
+  :root {
+    --hc-primary: #0077b6;
+    --hc-secondary: #f0f7ff;
+    --hc-accent: #023e8a;
+    --hc-text: #1e293b;
+    --hc-border: #cbdceb;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--hc-secondary);
+    color: var(--hc-text);
+  }
+
+  /* --- NAVBAR (Consistent with other pages) --- */
+  .hc-navbar {
+    background: var(--hc-accent);
+    padding: 0 25px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+  }
+
+  .nav-logo {
+    width: 34px;
+    height: 34px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--hc-accent);
+    font-weight: bold;
+    font-size: 22px;
+  }
+
+  /* --- EDIT FORM LAYOUT --- */
+  .container {
+    max-width: 950px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  .edit-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  @media (min-width: 850px) {
+    .edit-grid { grid-template-columns: 2fr 1fr; }
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--hc-border);
+    box-shadow: 0 10px 25px rgba(0, 50, 100, 0.05);
+    overflow: hidden;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+    padding: 20px 30px;
+    color: white;
+  }
+
+  .card-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .form-body {
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--hc-primary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--hc-border);
+    border-radius: 8px;
+    background: #fcfdfe;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--hc-primary);
+    box-shadow: 0 0 0 4px rgba(0, 119, 182, 0.1);
+    background: white;
+  }
+
+  /* --- PREVIEW SIDEBAR --- */
+  .preview-sidebar {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--hc-border);
+    height: fit-content;
+  }
+
+  .preview-sidebar h4 {
+    margin: 0 0 15px 0;
+    font-size: 0.9rem;
+    color: #64748b;
+    border-bottom: 1px solid var(--hc-secondary);
+    padding-bottom: 10px;
+  }
+
+  .current-img-wrapper {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--hc-border);
+    margin-bottom: 15px;
+  }
+
+  .current-img-wrapper img {
+    width: 100%;
+    display: block;
+  }
+
+  .info-tag {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    color: #475569;
+  }
+
+  /* --- ACTIONS --- */
+  .footer-actions {
+    padding: 20px 30px;
+    background: #f8fafc;
+    border-top: 1px solid var(--hc-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-update {
+    background: var(--hc-primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-update:hover { background: var(--hc-accent); }
+
+  .cancel-link {
+    text-decoration: none;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+</style>
+
+<nav class="hc-navbar">
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">+</div>
+    <span>MED-Portal</span>
+  </a>
+  <div style="color: white; font-size: 0.85rem;">
+    Editing Record ID: <strong>#{{ product.id }}</strong>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="edit-grid">
+    <div class="card">
+      <div class="card-header">
+        <h2>Modify Clinical Product Record</h2>
+      </div>
+      
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-body">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" name="name" value="{{ product.name }}" required>
+          </div>
+
+          <div style="display: flex; gap: 20px;">
+            <div class="form-group" style="flex: 1;">
+              <label>Unit Price (₹)</label>
+              <input type="number" name="price" step="0.01" value="{{ product.price }}" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Inventory Count</label>
+              <input type="number" name="stock" value="{{ product.stock }}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Clinical Notes / Description</label>
+            <textarea name="description" rows="5">{{ product.description }}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Replace Reference Image (Optional)</label>
+            <input type="file" name="image" style="font-size: 0.8rem;">
+          </div>
+        </div>
+
+        <div class="footer-actions">
+          <a href="{% url 'my_products' %}" class="cancel-link">Back to List</a>
+          <button type="submit" class="btn-update">Update Database</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="preview-sidebar">
+      <h4>Current Entry Data</h4>
+      <div class="current-img-wrapper">
+        <img src="{{ product.image.url }}" alt="Current Product">
+      </div>
+      <div class="info-tag"><strong>SKU:</strong> {{ product.id }}</div>
+      <div class="info-tag"><strong>Last Price:</strong> ₹{{ product.price }}</div>
+      <div class="info-tag"><strong>Last Stock:</strong> {{ product.stock }} Units</div>
+      
+      <div style="margin-top: 20px; padding: 10px; background: #fff9db; border-radius: 6px; font-size: 0.75rem; color: #856404; border: 1px solid #ffeeba;">
+        <strong>Notice:</strong> Changes to this record will be logged in the system audit trail.
+      </div>
+    </div>
+  </div>
+</div>

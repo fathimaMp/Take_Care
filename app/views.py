@@ -360,3 +360,43 @@ def edit_product(request, pk):
         form = ProductForm(instance=product)
         
     return render(request, 'add_product.html', {'form': form, 'edit_mode': True})
+
+@login_required
+def edit_product(request, product_id):
+    if request.user.user_type != CustomUser.SELLER:
+        return redirect('home')
+
+    product = get_object_or_404(
+        Product,
+        id=product_id,
+        created_by=request.user
+    )
+
+    if request.method == 'POST':
+        product.name = request.POST.get('name')
+        product.price = request.POST.get('price')
+        product.stock = request.POST.get('stock')
+        product.description = request.POST.get('description')
+
+        if request.FILES.get('image'):
+            product.image = request.FILES.get('image')
+
+        product.save()
+        return redirect('my_products')
+
+    return render(request, 'seller/edit_product.html', {'product': product})
+
+
+@login_required
+def delete_product(request, product_id):
+    if request.user.user_type != CustomUser.SELLER:
+        return redirect('home')
+
+    product = get_object_or_404(
+        Product,
+        id=product_id,
+        created_by=request.user
+    )
+
+    product.delete()
+    return redirect('my_products')
