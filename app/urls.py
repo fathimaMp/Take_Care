@@ -60,13 +60,16 @@ urlpatterns = [
 
 
 #E-Commerce Module
-    path('product_list/',views.product_list,name='product_list'),
-    path('become-seller/', views.become_seller, name='become_seller'),
+    path('list_product/',views.list_product,name='list_product'),
+    path('seller_register/', views.seller_register, name='seller_register'),
     path('dashboard/', views.seller_dashboard, name='seller_dashboard'),
     path('add-product/', views.add_product, name='add_product'),
     path('my-products/', views.my_products, name='my_products'),
     path('seller/product/edit/<int:product_id>/', views.edit_product, name='edit_product'),
     path('seller/product/delete/<int:product_id>/', views.delete_product, name='delete_product'),
+    path('seller/rejected/', views.seller_rejected, name='seller_rejected'),
+    path('seller/pending/', views.seller_pending, name='seller_pending'),
+    path('seller/entry/', views.seller_entry, name='seller_entry'),
 ]
 
 

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Inventory | HMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .bg-clinical-tint { background-color: #f0f7ff; }
+        .text-medical-light { color: #00a8e8; }
+        .text-medical-primary { color: #0077b6; }
+        
+        .medical-img-fit {
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            padding: 1.25rem;
+            background: #ffffff;
+            transition: transform 0.5s ease;
+        }
+        .card-hover:hover .medical-img-fit {
+            transform: scale(1.08);
+        }
+
+        /* EXACT CIRCLE POP STYLE FOR BOTH BUTTONS */
+        .circle-pop {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #eef2f6;
+        }
+        
+        /* Wishlist specific hover */
+        .wishlist-btn:hover {
+            transform: scale(1.15);
+            color: #ef4444;
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.15);
+        }
+
+        /* Cart specific hover */
+        .cart-btn:hover {
+            transform: scale(1.15);
+            color: #0077b6;
+            background-color: #f0f7ff;
+            box-shadow: 0 6px 15px rgba(0, 119, 182, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-clinical-tint font-sans min-h-screen">
+
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-3 gap-4">
+                <a href="/" class="flex items-center gap-2 text-lg font-bold">
+                    <span class="material-icons text-blue-400">local_hospital</span>
+                    <span>HMS<span class="font-light text-blue-200">PHARMA</span></span>
+                </a>
+
+                <div class="flex items-center gap-6">
+                    <a href="{% url 'seller_register' %}" class="text-[11px] font-bold hover:text-blue-300 transition uppercase tracking-widest">Become a Seller</a>
+                    <a href="#" class="text-[11px] font-bold hover:text-blue-300 transition uppercase tracking-widest">Orders</a>
+                    
+                    <!-- {% if not request.user.is_staff %}
+                    <a href="{% url 'seller_register' %}" 
+                       class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest shadow-md">
+                        Become a Seller
+                    </a>
+                    {% endif %} -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+            <div class="card-hover group bg-white rounded-xl border border-blue-100 overflow-hidden hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col shadow-sm">
+                
+                <div class="relative h-64 bg-white flex items-center justify-center border-b border-blue-50 overflow-hidden">
+                    {% if product.image %}
+                       <img src="{{ product.image.url }}" 
+     alt="{{ product.name }}" 
+     class="medical-img-fit" 
+     style="object-fit: contain; width: 100%; height: 100%; padding: 1rem; border-radius: 12px 12px 0 0; transition: transform 0.5s ease;">
+                    {% else %}
+                        <div class="flex flex-col items-center justify-center text-blue-50">
+                            <span class="material-icons text-7xl">pill</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="absolute top-3 right-3">
+                        <button class="circle-pop wishlist-btn text-slate-300">
+                            <span class="material-icons text-lg">favorite_border</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-5 flex-grow flex flex-col">
+                    <h3 class="text-slate-700 font-bold text-sm leading-tight mb-2 truncate" title="{{ product.name }}">
+                        {{ product.name }}
+                    </h3>
+                    
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-medical-primary font-black text-lg">₹{{ product.price }}</p>
+                        <span class="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-600 rounded text-[9px] font-extrabold uppercase border border-green-100 tracking-tight">
+                            <span class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>
+                            In Stock
+                        </span>
+                    </div>
+                    
+                    <div class="mt-auto pt-4 border-t border-blue-50 flex items-center justify-between">
+                        <div class="flex flex-col overflow-hidden">
+                            <span class="text-[9px] uppercase text-blue-300 font-extrabold tracking-tighter">Verified Seller</span>
+                            <span class="text-[11px] text-medical-light font-bold truncate">{{ product.created_by.firstname }} {{ product.created_by.lastname }}
+
+</span>
+                        </div>
+                        
+                        <button class="circle-pop cart-btn text-slate-400">
+                            <span class="material-icons text-xl">shopping_cart</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer class="py-10 text-center opacity-60">
+        <p class="text-blue-400 text-[9px] uppercase font-bold tracking-[0.2em]">
+            &copy; 2026 HMS Clinical Portal
+        </p>
+    </footer>
+
+</body>
+</html>

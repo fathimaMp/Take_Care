@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, CharityApplication,Product  # <-- import from your models
+from .models import CustomUser, CharityApplication,Product, SellerProfile # <-- import from your models
 
 # --- Custom User Admin ---
 class CustomUserAdmin(UserAdmin):
@@ -32,3 +32,56 @@ class CharityApplicationAdmin(admin.ModelAdmin):
     search_fields = ('name', 'email', 'phone')
 
 admin.site.register(Product)
+
+
+from django.contrib import admin
+from .models import SellerProfile, CustomUser
+
+@admin.action(description="Approve selected sellers")
+def approve_sellers(modeladmin, request, queryset):
+    for seller in queryset:
+        seller.is_approved = True
+        seller.save()
+
+        seller.user.status = True     # activate user
+        seller.user.is_active = True
+        seller.user.save()
+
+from django.contrib import admin
+from .models import SellerProfile
+
+from django.contrib import admin
+from .models import SellerProfile, CustomUser
+
+@admin.register(SellerProfile)
+class SellerProfileAdmin(admin.ModelAdmin):
+    list_display = ('business_name', 'user', 'is_approved')
+    actions = ['approve_seller', 'reject_seller']
+
+    def approve_seller(self, request, queryset):
+        for seller in queryset:
+            seller.is_approved = True
+            seller.save()
+
+            user = seller.user
+            user.user_type = CustomUser.SELLER
+            user.save()
+
+        self.message_user(request, "Seller approved successfully")
+def reject_seller(self, request, queryset):
+    # This updates the database for all selected sellers
+    queryset.update(is_rejected=True, is_approved=False)
+    
+    # Optional: Update user type to standard user
+    for seller in queryset:
+        user = seller.user
+        user.user_type = 'USER'
+        user.save()
+
+    self.message_user(request, "Selected sellers have been rejected.")
+
+# @admin.register(SellerProfile)
+# class SellerProfileAdmin(admin.ModelAdmin):
+#     list_display = ('business_name', 'user', 'is_approved')
+#     list_filter = ('is_approved', 'category')
+#     actions = [approve_sellers]

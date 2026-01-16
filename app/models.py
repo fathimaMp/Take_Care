@@ -151,6 +151,8 @@ class CharityApplication(models.Model):
 
 #E-Commerce Module
 
+from django.utils import timezone
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=8, decimal_places=2)
@@ -158,8 +160,46 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/')
     stock = models.PositiveIntegerField(default=0)
     created_by = models.ForeignKey(
-    settings.AUTH_USER_MODEL,
-    on_delete=models.CASCADE
-)
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+
+
     def __str__(self):
         return self.name
+    
+from django.db import models
+from django.conf import settings
+
+class SellerProfile(models.Model):
+    CATEGORY_CHOICES = [
+        ('Medical Supplies', 'Medical Supplies'),
+        ('Pharmaceuticals', 'Pharmaceuticals'),
+        ('Lab Equipment', 'Lab Equipment'),
+        ('Surgical Instruments', 'Surgical Instruments'),
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='seller_profile'
+    )
+
+    business_name = models.CharField(max_length=255)
+    tax_id = models.CharField(max_length=50)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+
+    # ✅ approval fields
+    is_approved = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    rejection_reason = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    def save(self, *args, **kwargs):
+        if self.is_rejected:
+            self.is_approved = False
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.business_name

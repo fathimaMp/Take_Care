@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm, SetPasswordForm, PasswordResetForm
-from .models import CustomUser, DonorApplication, CharityRequest, CharityApplication 
+from .models import CustomUser, DonorApplication, CharityRequest, CharityApplication
 
 # User Creation Form (Registration)
 class MyUserCreationForm(UserCreationForm):

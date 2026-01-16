@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout as auth_logout
 from django.contrib import messages
 from app.models import CustomUser
+from .models import Product
 
 
 from .models import (
@@ -94,7 +95,12 @@ def charity_user_reg(request):
     return register_user(request, 'charity_page')
 
 def seller_reg(request):
-    return register_user(request, 'seller_page')
+    if request.method == 'POST':
+        request.user.is_staff = True   # mark user as seller
+        request.user.save()
+        return redirect('seller_dashboard')
+    return render(request, 'seller_register.html')
+
 
 
 class CustomLoginView(LoginView):
@@ -104,7 +110,7 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         user = self.request.user
         if user.user_type == CustomUser.SELLER:
-            return reverse_lazy('seller_page')
+            return reverse_lazy('seller_dashboard')
         elif user.user_type == CustomUser.NORMAL:
             return reverse_lazy('normal_user_page')
         elif user.user_type == CustomUser.CHARITY:
@@ -266,8 +272,8 @@ def charity_requests_list(request):
 
 #E-Commerce Module
 
-def product_list(request):
-    return render(request,"shopping/product_list.html")
+# def product_list(request):
+#     return render(request,"shopping/list_product.html")
 
 
 # from django.shortcuts import render, redirect
@@ -293,24 +299,101 @@ def product_list(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from .models import SellerProfile, CustomUser
+
 @login_required
-def become_seller(request):
-    if request.user.user_type == CustomUser.SELLER:
+def seller_register(request):
+
+    # Already approved seller
+    if request.user.user_type == CustomUser.SELLER and request.user.status:
         return redirect('seller_dashboard')
 
     if request.method == 'POST':
-        request.user.user_type = CustomUser.SELLER
-        request.user.save()
-        return redirect('seller_dashboard')
+        seller, created = SellerProfile.objects.get_or_create(
+            user=request.user,
+            defaults={
+                'business_name': request.POST.get('business_name'),
+                'tax_id': request.POST.get('tax_id'),
+                'category': request.POST.get('category'),
+            }
+        )
 
-    return render(request, 'seller/become_seller.html')
+        # If already exists → just go to pending
+        if not created:
+            return redirect('seller_pending')
+
+        request.user.user_type = CustomUser.SELLER
+        request.user.status = False
+        request.user.save()
+
+        return redirect('seller_pending')
+
+    return render(request, 'seller/seller_register.html')
+
+
 
 @login_required
 def seller_dashboard(request):
-    if request.user.user_type != CustomUser.SELLER:
-        return redirect('home')
+    seller = request.user.seller_profile
 
+    # 1. Check rejection FIRST
+    if seller.is_rejected:
+        return redirect('seller_rejected')
+
+    # 2. Check if they are still pending
+    if not seller.is_approved:
+        return redirect('seller_pending')
+
+    # 3. If neither, show dashboard
     return render(request, 'seller/dashboard.html')
+
+@login_required
+def seller_entry(request):
+    seller = request.user.seller_profile
+
+    # Always check rejection as the priority
+    if seller.is_rejected:
+        return redirect('seller_rejected')
+
+    if not seller.is_approved:
+        return redirect('seller_pending')
+
+    return redirect('seller_dashboard')
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.http import HttpResponse
+
+
+
+
+@login_required
+def seller_rejected(request):
+    seller = request.user.seller_profile
+    return HttpResponse(f"REJECTED ❌<br>Reason: {seller.rejection_reason}")
+
+@login_required
+def seller_pending(request):
+    seller = request.user.seller_profile
+
+    if seller.is_approved:
+        return redirect('seller_dashboard')
+
+    return render(request, 'seller/seller_pending.html')
+
+
+def approve_seller(self, request, queryset):
+    for seller in queryset:
+        seller.is_approved = True
+        seller.is_rejected = False
+        seller.rejection_reason = ''
+        seller.save()
+
+        user = seller.user
+        user.user_type = 'SELLER'
+        user.save()
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -333,6 +416,7 @@ def add_product(request):
         return redirect('seller_dashboard')
 
     return render(request, 'seller/add_product.html')
+
 
 @login_required
 def my_products(request):
@@ -400,3 +484,9 @@ def delete_product(request, product_id):
 
     product.delete()
     return redirect('my_products')
+
+# views.py
+
+def list_product(request):
+    products = Product.objects.all().order_by('-created_at')
+    return render(request, 'shopping/list_product.html', {'products': products})
