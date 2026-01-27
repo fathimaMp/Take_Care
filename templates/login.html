@@ -4,150 +4,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Takecare</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  </head> 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>TakeCare | Hospital Login</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        /* Fullscreen Centered Background */
+        :root {
+            --primary-blue: #0056b3;
+            --accent-blue: #e7f1ff;
+            --border-blue: #b3d7ff;
+            --dark-navy: #1e293b;
+        }
+
         body {
-            background: linear-gradient(135deg, #ffffff, #ffffff, #ffffff);
-            font-family: 'Poppins', sans-serif;
-            color: white;
+            background: radial-gradient(circle at top right, #edf1f4, #ccdbec);
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-navy);
+            height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            flex-direction: column;
             margin: 0;
-            padding-top: 56px; /* Offset for fixed navbar */
         }
 
-        /* Navbar Styling */
         .navbar {
-            background: linear-gradient(135deg, #033860, #0455b7) !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(0, 86, 179, 0.1);
+            border-bottom: 3px solid var(--primary-blue);
+            padding: 12px 0;
         }
 
-        /* Glassmorphism Card */
-        .password-card {
-            background: rgba(5, 1, 242, 0.12);
-            backdrop-filter: blur(8px);
-            border-radius: 10px;
-            box-shadow: 0px 5px 15px rgba(22, 26, 26, 0.3);
-            padding: 1rem;
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-blue) !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* --- UPDATED CARD: Removed blue border, kept strong shadow --- */
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
+            padding: 45px;
+            /* Border is now a faint neutral gray instead of blue */
+            border: 1px solid #eeeeee; 
+            /* Deeper shadow ensures visibility without the colored border */
+            box-shadow: 0 25px 50px rgba(0, 56, 179, 0.2); 
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-header .icon-box {
+            width: 70px;
+            height: 70px;
+            background: var(--accent-blue);
+            color: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            border: 1px solid var(--border-blue);
+        }
+
+        .login-header h2 {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--primary-blue);
+        }
+
+        .form-control {
+            height: 50px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-blue);
+            background-color: #fcfdff;
+            padding-left: 45px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
+        }
+
+        .input-group-text {
+            background: transparent;
+            border: none;
+            position: absolute;
+            z-index: 10;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: var(--primary-blue);
+        }
+
+        .btn-hospital {
+            background-color: var(--primary-blue);
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+        }
+
+        .btn-hospital:hover {
+            background-color: #004494;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 86, 179, 0.3);
+        }
+
+        .form-footer {
+            margin-top: 25px;
             text-align: center;
         }
 
-        /* Responsive Input Box */
-        .input-box {
-            width: 100%;
-            height: 45px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
+        .form-footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
         }
 
-        .input-box input {
-            width: 100%;
-            height: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-size: 14px;
-            color: white;
-        }
-
-        /* Responsive Button */
-        .btn-glow {
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
-            color: white;
-            font-weight: bold;
-            padding: 10px;
-            font-size: 14px;
-            border-radius: 20px;
-            transition: 0.3s;
-            box-shadow: 0px 3px 10px rgba(255, 255, 255, 0.3);
-            text-transform: uppercase;
-            width: 100%;
-        }
-
-        .btn-glow:hover {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            box-shadow: 0px 5px 14px rgba(255, 255, 255, 0.5);
+        hr {
+            border-top: 1px solid var(--border-blue);
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
-  <!-- Bootstrap CSS (Already included) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Bootstrap JS (Ensure this is included) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">TakeCare</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid fa-house-medical"></i> TakeCare
+            </a>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-
-                        <a class="nav-link active" href="{% url 'home' %}">Home</a>
-
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                    
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="icon-box">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h2>Patient Login</h2>
+                <p class="text-muted small">Access your medical records securely</p>
+            </div>
 
-<div class="box">
-  <div class="login">
-    <div class="loginBx">
-        
-      <h2>
-        <i class="fa-solid fa-right-to-bracket"></i>
-          Login
-      </h2>
-      <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Username" required> <br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <input type="submit" value="Sign in">
-      </form>
-      <div class="group">
-        <a href="{% url 'password_reset' %}">Forgot Password</a>
-        <a href="{% url 'normal_user_page' %}">Not registered yet?</a>
- 
-      </div>
-    </div><br>
-    {% if form.non_field_errors %}
-    {% for error in form.non_field_errors %}
-        <p class="alert alert-danger my-3">&nbsp;&nbsp;{{error}}</p>
-            {% endfor %}
-            {% endif %}
-  </div>
-</div>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'home' %}">
+                
+                <div class="mb-3 position-relative">
+                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Email ID" required>
+                </div>
 
+                <div class="mb-4 position-relative">
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="btn btn-hospital">
+                    <i class="fa-solid fa-unlock-keyhole me-2"></i> Sign In
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                <hr class="my-3">
+                <p class="mb-1 text-muted">Don't have an account?</p>
+                <a href="{% url 'normal_user_page' %}" class="btn btn-outline-primary btn-sm w-100 mt-2 text-decoration-none" style="border-radius: 8px;">
+                    Create New Account
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

@@ -67,7 +67,9 @@ class SellerProfileAdmin(admin.ModelAdmin):
             user.user_type = CustomUser.SELLER
             user.save()
 
-        self.message_user(request, "Seller approved successfully")
+        self.message_user(request, "Seller approved successfully") 
+         
+
 def reject_seller(self, request, queryset):
     # This updates the database for all selected sellers
     queryset.update(is_rejected=True, is_approved=False)
@@ -85,3 +87,24 @@ def reject_seller(self, request, queryset):
 #     list_display = ('business_name', 'user', 'is_approved')
 #     list_filter = ('is_approved', 'category')
 #     actions = [approve_sellers]
+
+
+from django.contrib import admin
+from .models import Cart, CartItem
+
+
+class CartItemInline(admin.TabularInline):
+    model = CartItem
+    extra = 0
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'created_at')
+    inlines = [CartItemInline]
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cart', 'product', 'quantity')
+    list_filter = ('cart', 'product')

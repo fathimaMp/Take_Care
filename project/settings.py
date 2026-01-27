@@ -154,5 +154,8 @@ LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = '/seller/entry/'
 
+# Use the 'name' you gave your index/home URL in urls.py
+LOGIN_REDIRECT_URL = 'index'
+
 
 

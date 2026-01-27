@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Portal | Inventory View</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f7ff; font-family: 'Segoe UI', Tahoma, sans-serif; color: #334e68;">
+
+    <header style="background: #ffffff; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid #dbeafe; position: sticky; top: 0; z-index: 1000;">
+        
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="background: #60a5fa; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">+</div>
+            <span style="font-weight: 700; font-size: 20px; color: #1e3a8a; letter-spacing: -0.5px;">Blue<span style="color: #60a5fa;">Cross</span></span>
+        </div>
+
+        <div style="flex: 0 1 400px; position: relative;">
+            <input type="text" placeholder="Search supplies or equipment..." 
+                style="width: 100%; padding: 10px 15px 10px 40px; border-radius: 50px; border: 1px solid #dbeafe; background: #f8fbff; color: #1e3a8a; font-size: 14px; outline: none;">
+            <span style="position: absolute; left: 15px; top: 10px; opacity: 0.4;">🔍</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="text-align: right;">
+                <div style="font-size: 13px; font-weight: 700; color: #466fde;">{{ user.username|default:"Staff_User" }}</div>
+                <div style="font-size: 11px; color: #60a5fa; font-weight: 600;">Main Branch</div>
+            </div>
+            <div style="width: 40px; height: 40px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;"></div>
+        </div>
+    </header>
+
+    <main style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
+        
+        <div style="background: #ffffff; border-radius: 20px; display: flex; flex-wrap: wrap; overflow: hidden; border: 1px solid #e1eaf2; box-shadow: 0 10px 30px rgba(30, 58, 138, 0.04);">
+            
+            <div style="flex: 1; min-width: 350px; background: #fcfdfe; padding: 50px; display: flex; align-items: center; justify-content: center;">
+                <div style="background: #ffffff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border: 1px solid #f0f7ff;">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; height: 100%; border-radius: 10px;">
+                </div>
+            </div>
+
+            <div style="flex: 1.2; min-width: 350px; padding: 50px;"><br>
+                
+                <span style="display: inline-block; background:  #eff6ff; color: #3b82f6; font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 50px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Department: {{ product.category }}
+                </span>
+
+                <h1 style="margin: 0; font-size: 30px; color: #1e3a8a; font-weight: 700; line-height: 1.1;">
+                    {{ product.name }}
+                </h1>
+
+                <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 20px; font-weight: 650; color: #1e3a8a;">₹{{ product.price }}</span>
+                    <span style="color: #94a3b8; font-size: 14px;">/ per unit</span>
+                </div>
+
+                <div style="margin: 30px 0; border-top: 1px solid #f0f7ff; padding-top: 25px;">
+                    <h4 style="font-size: 12px; color: #60a5fa; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">Clinical Overview</h4>
+                    <p style="margin: 0; color: #475a7a; line-height: 1.8; font-size: 16px;">
+                        {{ product.description }}
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-bottom: 40px;">
+                    <div style="flex: 1; background: #f8fbff; padding: 15px; border-radius: 12px; border: 1px solid #e0eefe;">
+                        <span style="display: block; font-size: 11px; color: #60a5fa; font-weight: 700; margin-bottom: 4px;">STOCK AVAILABLE</span>
+                        <span style="font-size: 17px; font-weight: 650; color: #1e3a8a;">{{ product.stock }} Units</span>
+                    </div>
+                    <div style="flex: 1; background: #f8fbff; padding: 15px; border-radius: 12px; border: 1px solid #e0eefe;">
+                        <span style="display: block; font-size: 11px; color: #60a5fa; font-weight: 700; margin-bottom: 4px;">VERIFIED VENDOR</span>
+                        <span style="font-size: 18px; font-weight: 700; color: #1e3a8a;">{{ product.seller.user.username }}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; align-items: center;">
+    
+    <!-- Add to Cart -->
+    <a href="{% url 'add_to_cart' product.id %}"
+       style="
+           flex: 2;
+           background: #3b82f6;
+           color: white;
+           padding: 18px;
+           border-radius: 12px;
+           font-weight: 700;
+           font-size: 16px;
+           cursor: pointer;
+           box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+           text-decoration: none;
+           text-align: center;
+           display: block;
+       ">
+        Add to Cart
+    </a>
+
+    <!-- Back -->
+    <a href="{% url 'home' %}"
+       style="
+           flex: 1;
+           text-align: center;
+           text-decoration: none;
+           color: #60a5fa;
+           background: #ffffff;
+           border: 1px solid #dbeafe;
+           padding: 18px;
+           border-radius: 12px;
+           font-weight: 700;
+           font-size: 14px;
+           display: block;
+       ">
+        BACK
+    </a>
+
+</div>
+   
+                <div style="margin-top: 30px; display: flex; gap: 20px; opacity: 0.6;">
+                    <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;">🛡️ SECURE SUPPLY</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;">🧊 COLD CHAIN</span>
+                    <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;">✅ FDA COMPLIANT</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

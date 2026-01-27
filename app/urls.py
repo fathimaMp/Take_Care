@@ -70,6 +70,21 @@ urlpatterns = [
     path('seller/rejected/', views.seller_rejected, name='seller_rejected'),
     path('seller/pending/', views.seller_pending, name='seller_pending'),
     path('seller/entry/', views.seller_entry, name='seller_entry'),
+    path('product/<int:id>/', views.product_detail, name='product_detail'),
+
+ # ✅ CART PAGE
+    path('cart/', views.cart_view, name='cart'),
+
+    # ✅ ACTION URLS
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('update-cart/<int:item_id>/', views.update_cart, name='update_cart'),
+    path('remove-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+
+#checkout
+    path('checkout/', views.checkout_view, name='checkout'),
+    # path('payment/<int:order_id>/', views.payment_view, name='payment'),
+    # path('payment-success/', views.payment_success, name='payment_success'),
+
 ]
 
 

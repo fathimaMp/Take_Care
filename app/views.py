@@ -112,10 +112,9 @@ class CustomLoginView(LoginView):
         if user.user_type == CustomUser.SELLER:
             return reverse_lazy('seller_dashboard')
         elif user.user_type == CustomUser.NORMAL:
-            return reverse_lazy('normal_user_page')
+            return reverse_lazy('home')
         elif user.user_type == CustomUser.CHARITY:
-            
-            return reverse_lazy('charity_page')
+            return reverse_lazy('home')
         return reverse_lazy('navbar')
 
 
@@ -490,3 +489,199 @@ def delete_product(request, product_id):
 def list_product(request):
     products = Product.objects.all().order_by('-created_at')
     return render(request, 'shopping/list_product.html', {'products': products})
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Product
+
+def product_detail(request, id):
+    product = get_object_or_404(Product, id=id)
+    return render(request, 'shopping/product_details.html', {
+        'product': product
+    })
+
+
+#cart
+from django.shortcuts import redirect, render, get_object_or_404
+from .models import Product
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Product
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from .models import Cart, CartItem, Product
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import Cart, CartItem, Product
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product
+    )
+
+    if not created:
+        cart_item.quantity += 1
+
+    cart_item.save()
+
+    return redirect('cart')
+
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def cart_view(request):
+    cart = getattr(request.user, 'cart', None)
+
+    if cart:
+        cart_items = cart.items.select_related('product')
+        total_price = sum(item.subtotal() for item in cart_items)
+    else:
+        cart_items = []
+        total_price = 0
+
+    return render(request, 'cart/cart.html', {
+        'cart': cart,
+        'cart_items': cart_items,
+        'total_price': total_price
+    })
+
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import CartItem
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import CartItem
+
+def update_cart(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id)
+
+    if request.method == "POST":
+        quantity = request.POST.get("quantity")
+        if quantity:
+            item.quantity = int(quantity)
+            item.save()
+
+    return redirect('cart')  # ✅ THIS FIXES YOUR ERROR
+
+
+
+@login_required
+def remove_from_cart(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id)
+    item.delete()
+    return redirect('cart')
+
+
+#checkout
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Order, OrderItem
+from .models import Cart, CartItem
+
+
+@login_required
+def checkout(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    items = cart.items.all()
+
+    if not items.exists():
+        return redirect('cart')
+
+    total = sum(item.subtotal() for item in items)
+
+    if request.method == 'POST':
+        order = Order.objects.create(
+            user=request.user,
+            full_name=request.POST['full_name'],
+            phone=request.POST['phone'],
+            address=request.POST['address'],
+            city=request.POST['city'],
+            pincode=request.POST['pincode'],
+            total_price=total
+        )
+
+        for item in items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                price=item.product.price,
+                quantity=item.quantity
+            )
+
+            item.product.stock -= item.quantity
+            item.product.save()
+
+        items.delete()  # clear cart
+        return redirect('order_success', order.id)
+
+    return render(request, 'checkout.html', {
+        'items': items,
+        'total': total
+    })
+
+
+def order_success(request, order_id):
+    order = Order.objects.get(id=order_id)
+    return render(request, 'order_success.html', {'order': order})
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_orders.html', {'orders': orders})
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from decimal import Decimal
+from .models import Cart, CartItem, Order, OrderItem
+
+@login_required
+def checkout_view(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    items = cart.items.all()
+
+    if not items.exists():
+        return redirect('list_product')
+
+    total_price = sum(item.subtotal() for item in items)
+
+    if request.method == 'POST':
+        order = Order.objects.create(
+            user=request.user,
+            full_name=request.POST['full_name'],
+            phone=request.POST['phone'],
+            address=request.POST['address'],
+            city=request.POST['city'],
+            pincode=request.POST['pincode'],
+            total_price=total_price,
+            status='Pending'
+        )
+
+        for item in items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                price=item.product.price,
+                quantity=item.quantity
+            )
+
+        return redirect('payment', order_id=order.id)
+
+    return render(request, 'cart/checkout.html', {
+        'cart_items': items,
+        'total_price': total_price
+    })
