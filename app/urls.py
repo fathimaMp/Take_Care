@@ -63,7 +63,7 @@ urlpatterns = [
     path('list_product/',views.list_product,name='list_product'),
     path('seller_register/', views.seller_register, name='seller_register'),
     path('dashboard/', views.seller_dashboard, name='seller_dashboard'),
-    path('add-product/', views.add_product, name='add_product'),
+    path('add_product/', views.add_product, name='add_product'),
     path('my-products/', views.my_products, name='my_products'),
     path('seller/product/edit/<int:product_id>/', views.edit_product, name='edit_product'),
     path('seller/product/delete/<int:product_id>/', views.delete_product, name='delete_product'),
@@ -82,8 +82,9 @@ urlpatterns = [
 
 #checkout
     path('checkout/', views.checkout_view, name='checkout'),
-    # path('payment/<int:order_id>/', views.payment_view, name='payment'),
-    # path('payment-success/', views.payment_success, name='payment_success'),
+    path("payment/<int:order_id>/", views.payment_view, name="payment"),
+    path("payment-success/", views.payment_success, name="payment_success"),
+
 
 ]
 

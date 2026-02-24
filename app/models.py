@@ -258,7 +258,7 @@ class Order(models.Model):
     address = models.TextField()
     city = models.CharField(max_length=50)
     pincode = models.CharField(max_length=10)
-
+    razorpay_order_id = models.CharField(max_length=200, blank=True, null=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(
         max_length=20,

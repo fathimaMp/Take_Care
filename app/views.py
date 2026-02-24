@@ -99,23 +99,29 @@ def seller_reg(request):
         request.user.is_staff = True   # mark user as seller
         request.user.save()
         return redirect('seller_dashboard')
-    return render(request, 'seller_register.html')
+    return render(request, 'seller/seller_register.html')
 
 
+
+from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.urls import reverse_lazy
 
 class CustomLoginView(LoginView):
-    form_class = LoginForm
     template_name = 'login.html'
+    form_class = LoginForm
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Invalid email or password")
+        return super().form_invalid(form)
 
     def get_success_url(self):
         user = self.request.user
         if user.user_type == CustomUser.SELLER:
             return reverse_lazy('seller_dashboard')
-        elif user.user_type == CustomUser.NORMAL:
+        elif user.user_type in [CustomUser.NORMAL, CustomUser.CHARITY]:
             return reverse_lazy('home')
-        elif user.user_type == CustomUser.CHARITY:
-            return reverse_lazy('home')
-        return reverse_lazy('navbar')
+        return reverse_lazy('home')
 
 
 # ----------------------------
@@ -302,6 +308,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from .models import SellerProfile, CustomUser
 
+
+
+
 @login_required
 def seller_register(request):
 
@@ -375,12 +384,21 @@ def seller_rejected(request):
 
 @login_required
 def seller_pending(request):
-    seller = request.user.seller_profile
+    try:
+        seller = request.user.seller_profile
+        seller.refresh_from_db()
+    except Exception:
+        return redirect('seller_dashboard')  # ✅ FIX
 
+    # If approved → dashboard
     if seller.is_approved:
+        if seller.is_rejected:
+            seller.is_rejected = False
+            seller.rejection_reason = ""
+            seller.save()
         return redirect('seller_dashboard')
 
-    return render(request, 'seller/seller_pending.html')
+    return render(request, 'seller/seller_pending.html', {'seller': seller})
 
 
 def approve_seller(self, request, queryset):
@@ -486,9 +504,24 @@ def delete_product(request, product_id):
 
 # views.py
 
+from .models import Cart
+
 def list_product(request):
     products = Product.objects.all().order_by('-created_at')
-    return render(request, 'shopping/list_product.html', {'products': products})
+
+    cart_count = 0
+
+    if request.user.is_authenticated:
+        try:
+            cart = Cart.objects.get(user=request.user)
+            cart_count = cart.items.count()
+        except Cart.DoesNotExist:
+            cart_count = 0
+
+    return render(request, 'shopping/list_product.html', {
+        'products': products,
+        'cart_count': cart_count
+    })
 
 
 from django.shortcuts import render, get_object_or_404
@@ -516,74 +549,113 @@ from .models import Cart, CartItem, Product
 from django.shortcuts import get_object_or_404, redirect
 from .models import Cart, CartItem, Product
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import redirect # Ensure this is at the top of your file
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from .models import Cart, CartItem, Product
+from django.db.models import Sum
 
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-
     cart, created = Cart.objects.get_or_create(user=request.user)
-
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=product
-    )
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
     if not created:
         cart_item.quantity += 1
+        cart_item.save()
 
-    cart_item.save()
-
+    # RECALCULATE FOR THE HEADER
+    total_qty = cart.items.aggregate(total=Sum('quantity'))['total'] or 0
+    request.session['cart_count'] = total_qty 
+    
     return redirect('cart')
-
-
-
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from .models import Product # Make sure to import your model
+
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def cart_view(request):
-    cart = getattr(request.user, 'cart', None)
+    cart, created = Cart.objects.get_or_create(user=request.user)
 
-    if cart:
-        cart_items = cart.items.select_related('product')
-        total_price = sum(item.subtotal() for item in cart_items)
-    else:
-        cart_items = []
-        total_price = 0
+    cart_items = cart.items.all()
+
+    total_price = sum(item.subtotal() for item in cart_items)
 
     return render(request, 'cart/cart.html', {
-        'cart': cart,
         'cart_items': cart_items,
-        'total_price': total_price
+        'total_price': total_price,
+        'cart_count': cart_items.count()
     })
 
-
-from django.shortcuts import redirect, get_object_or_404
 from .models import CartItem
 
 from django.shortcuts import redirect, get_object_or_404
 from .models import CartItem
 
+from django.shortcuts import get_object_or_404, redirect
+
+@login_required
 def update_cart(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id)
+    cart_item = get_object_or_404(
+        CartItem,
+        id=item_id,
+        cart__user=request.user
+    )
 
     if request.method == "POST":
-        quantity = request.POST.get("quantity")
-        if quantity:
-            item.quantity = int(quantity)
-            item.save()
+        action = request.POST.get('action')
+        
+        # 1. Handle the Plus/Minus Button Clicks
+        if action == 'increase':
+            cart_item.quantity += 1
+            cart_item.save()
+        elif action == 'decrease':
+            if cart_item.quantity > 1:
+                cart_item.quantity -= 1
+                cart_item.save()
+            else:
+                cart_item.delete() # Remove item if quantity goes below 1
+        
+        # 2. Handle Manual Input (if any)
+        else:
+            quantity = int(request.POST.get('quantity', 1))
+            if quantity > 0:
+                cart_item.quantity = quantity
+                cart_item.save()
+            else:
+                cart_item.delete()
 
-    return redirect('cart')  # ✅ THIS FIXES YOUR ERROR
-
-
+    return redirect('cart')
 
 @login_required
 def remove_from_cart(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id)
-    item.delete()
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    cart = cart_item.cart # Get reference to cart before deleting item
+    cart_item.delete()
+
+    # RECALCULATE FOR THE HEADER
+    total_qty = cart.items.aggregate(total=Sum('quantity'))['total'] or 0
+    request.session['cart_count'] = total_qty
+
     return redirect('cart')
 
+from .models import Cart
+from django.db.models import Sum
+
+def cart_count_processor(request):
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+        if cart:
+            count = cart.items.aggregate(total=Sum('quantity'))['total'] or 0
+            return {'global_cart_count': count}
+    return {'global_cart_count': 0}
 
 #checkout
 from django.shortcuts import render, redirect
@@ -685,3 +757,35 @@ def checkout_view(request):
         'cart_items': items,
         'total_price': total_price
     })
+
+
+from django.shortcuts import render
+from django.conf import settings
+import razorpay
+
+client = razorpay.Client(
+    auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+)
+
+def payment_view(request, order_id):
+    amount = 100  # ₹100 test
+
+    order = client.order.create({
+        "amount": amount * 100,  # paise
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    context = {
+        "order_id": order["id"],
+        "amount": amount,
+        "razorpay_key": settings.RAZORPAY_KEY_ID
+    }
+    return render(request, "payment/payment.html", context)
+
+
+from django.http import HttpResponse
+
+def payment_success(request):
+    return HttpResponse("🎉 Payment Successful")
+

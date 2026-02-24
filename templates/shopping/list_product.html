@@ -3,128 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedStore | Hospital Supplies</title>
+    <title>TakeCare | Clinical Excellence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; /* Clean Clinical Grey-White */
+            color: #1e293b; 
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .product-reveal {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        /* High-Fashion Hover Logic */
+        .img-container img {
+            transition: transform 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .product-card:hover .img-container img {
+            transform: scale(1.08);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 0.60rem;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 1.5rem;
+        }
+
+        .icon-btn {
+            background: white;
+            color: #2563eb; /* Clinical Blue */
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .icon-btn:hover {
+            background: #2563eb; 
+            color: white;
+            transform: translateY(-5px) !important;
+        }
+
+        .product-card:hover .icon-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nav link logic */
+        .nav-link {
+            position: relative;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #dbeafe; /* Light ice blue */
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: #ffffff; 
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link:hover { color: #ffffff; }
     </style>
 </head>
+<body>
 
-<body class="bg-slate-50">
-
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="bg-blue-600 p-1.5 rounded-lg">
-                    <i data-lucide="microscope" class="text-white w-5 h-5"></i>
+    <nav class="bg-[#2563eb] sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-10">
+                <h1 class="text-2xl font-light tracking-[0.2em] uppercase text-white">TakeCare</h1>
+                <div class="hidden md:flex gap-8">
+                    <a href="#" class="nav-link">Doctors</a>
+                    <a href="#" class="nav-link">Specialties</a>
+                    <a href="#" class="nav-link">Resources</a>
                 </div>
-                <span class="text-xl font-bold text-slate-900 tracking-tight">HOSPITAL<span class="text-blue-600">DIRECT</span></span>
             </div>
 
-            <div class="flex items-center gap-6">
-                <div class="relative">
-                <input type="text" placeholder="Search equipment..." class="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 shadow-sm">
-                <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
-            </div>
-                <a href="#" class="flex items-center gap-1 text-slate-600 hover:text-red-500 transition group">
-                    <div class="relative">
-                        <i data-lucide="heart" class="w-5 h-5"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-3.5 h-3.5 rounded-full flex items-center justify-center border-2 border-white">0</span>
-                    </div>
-
-
-                </a>
+            <div class="flex items-center gap-6 text-white/90">
+                <div class="cursor-pointer hover:text-white transition-colors">
+                    <i data-lucide="search" class="w-5 h-5 stroke-[1.5]"></i>
+                </div>
                 
-                <a href="#" class="flex items-center gap-1 text-slate-600 hover:text-blue-600 transition group">
-                    <div class="relative">
-                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                <div class="cursor-pointer hover:text-white transition-colors relative">
+                    <i data-lucide="heart" class="w-5 h-5 stroke-[1.5]"></i>
+                    <span class="absolute -top-1.5 -right-1.5 text-[9px] bg-white text-blue-600 w-3.5 h-3.5 flex items-center justify-center rounded-full font-bold">0</span>
+                </div>
 
+                <div class="cursor-pointer hover:text-white transition-colors relative">
+                    <a href="{% url 'cart' %}" class="cursor-pointer hover:text-white transition-colors relative">
+    <i data-lucide="shopping-cart" class="w-5 h-5 stroke-[1.5]"></i>
 
-                        <span class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] w-3.5 h-3.5 rounded-full flex items-center justify-center border-2 border-white">{{ request.session.cart|length }}</span>
-                    </div>
-                </a>
+    <span class="absolute -top-1.5 -right-1.5 text-[9px] bg-white text-blue-600 w-3.5 h-3.5 flex items-center justify-center rounded-full font-bold">
+        {{ cart_count }}
+    </span>
+</a>
+
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-6 pt-10 pb-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-900">Medical Inventory</h2>
-                <p class="text-slate-500 text-sm">Certified clinical equipment & hospital essentials</p>
-            </div>
-            
-        </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-
+    <main class="max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+        
         {% for product in products %}
-        <div class="group relative bg-white rounded-2xl border border-slate-200 hover:border-blue-400 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 flex flex-col overflow-hidden">
-            
-            <a href="{% url 'product_detail' product.id %}" class="block flex-grow">
-                <div class="h-60 flex items-center justify-center bg-white p-6 relative overflow-hidden">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" class="h-full object-contain group-hover:scale-110 transition-transform duration-500">
-                    {% else %}
-                        <div class="flex flex-col items-center text-slate-300">
-                            <i data-lucide="package" class="w-12 h-12 mb-2"></i>
-                            <span class="text-[10px] uppercase font-bold tracking-widest">No Image</span>
-                        </div>
-                    {% endif %}
-                    
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-blue-50 text-blue-700 text-[9.5px] font-bold px-2 py-1 rounded border border-blue-100 uppercase tracking-tighter">Certified Grade</span>
+        <div class="product-card group cursor-pointer product-reveal" style="animation-delay: calc({{ forloop.counter }} * 0.1s)">
+            <div class="img-container relative bg-blue-50/50 aspect-[2/2] overflow-hidden mb-6 border border-blue-100/50">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="w-full h-full object-cover group-hover:brightness-105 transition-all duration-700">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-blue-200">
+                        <i data-lucide="cross" class="w-12 h-12 stroke-1"></i>
                     </div>
-                </div>
+                {% endif %}
+                
+                <div class="absolute inset-0 bg-blue-600/5 flex items-end">
+    <div class="action-icons">
 
-                <div class="p-5 border-t border-slate-50">
-                    <h3 class="font-bold text-slate-800 group-hover:text-blue-600 transition truncate text-l">
-                        {{ product.name }}
-                    </h3>
-                    
-                    <div class="flex items-center gap-1 mt-1 text-slate-400">
-                        <i data-lucide="user" class="w-3 h-3"></i>
-                        <p class="text-[10px] font-medium tracking-wide">
-                            {{ product.created_by.firstname }} {{ product.created_by.lastname }}
-                        </p>
-                    </div>
+        <!-- Wishlist -->
+        <a href="#" 
+           class="icon-btn" title="Save">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+        </a>
 
-                    <div class="mt-4 flex items-end justify-between">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block font-bold uppercase">Unit Price</span>
-                            <p class="text-l font-black text-slate-900">
-                                ₹{{ product.price }}
-                            </p>
-                        </div>
-                        
-                        <div class="bg-blue-600 text-white p-2 rounded-lg shadow-md group-hover:bg-blue-700 transition">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                        </div>
-                    </div>
+        <!-- Add to Cart -->
+        <a href="{% url 'add_to_cart' product.id %}" 
+           class="icon-btn" title="Booking">
+            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+        </a>
+
+        <!-- Product Detail -->
+        <a href="{% url 'product_detail' product.id %}" 
+           class="icon-btn" title="View Details">
+            <i data-lucide="maximize-2" class="w-4 h-4"></i>
+        </a>
+
+    </div>
+</div>
+
+            </div>
+
+            <div class="text-center">
+                <h3 class="text-[11px] uppercase tracking-[0.15em] text-blue-500 mb-2 group-hover:text-blue-700 transition-colors">
+                    {{ product.name }}
+                </h3>
+                <div class="flex items-center justify-center gap-1 mb-2">
+                    <i data-lucide="star" class="w-2.5 h-2.5 fill-blue-500 text-blue-500"></i>
+                    <i data-lucide="star" class="w-2.5 h-2.5 fill-blue-500 text-blue-500"></i>
+                    <i data-lucide="star" class="w-2.5 h-2.5 fill-blue-500 text-blue-500"></i>
+                    <i data-lucide="star" class="w-2.5 h-2.5 fill-blue-500 text-blue-500"></i>
+                    <i data-lucide="star" class="w-2.5 h-2.5 text-blue-100"></i>
                 </div>
-            </a>
-            
-            <button class="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur rounded-full shadow-sm text-slate-400 hover:text-red-500 hover:bg-white transition opacity-0 group-hover:opacity-100 border border-slate-100">
-                <i data-lucide="heart" class="w-4 h-4"></i>
-            </button>
+                <p class="text-sm font-medium text-slate-900">${{ product.price }}</p>
+            </div>
         </div>
         {% endfor %}
 
-    </div>
-
-    <footer class="max-w-7xl mx-auto px-6 py-12 border-t border-slate-200 mt-12 text-center">
-        <div class="flex justify-center gap-8 text-slate-400 mb-4">
-            <div class="flex items-center gap-2"><i data-lucide="shield-check" class="w-5 h-5"></i> <span class="text-xs font-semibold">Quality Guaranteed</span></div>
-            <div class="flex items-center gap-2"><i data-lucide="truck" class="w-5 h-5"></i> <span class="text-xs font-semibold">Fast Medical Delivery</span></div>
-        </div>
-        <p class="text-slate-400 text-[11px]">© 2024 HospitalDirect Clinical Supplies. All products are sterilized and certified.</p>
-    </footer>
+    </main>
 
     <script>
-        // Initialize Icons
         lucide.createIcons();
     </script>
 </body>

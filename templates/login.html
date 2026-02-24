@@ -4,46 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TakeCare | Hospital Login</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>TakeCare | Health Portal</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        :root {
-            --primary-blue: #0056b3;
-            --accent-blue: #e7f1ff;
-            --border-blue: #b3d7ff;
-            --dark-navy: #1e293b;
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        body {
-            background: radial-gradient(circle at top right, #edf1f4, #ccdbec);
-            font-family: 'Inter', sans-serif;
-            color: var(--dark-navy);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
+        html, body {
+            height: 100%;
             margin: 0;
         }
 
+        .main-wrapper {
+            height: 100vh;
+            width: 100vw;
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.4)),
+                url('{% static "images/1.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
         .navbar {
-            background-color: #ffffff !important;
-            box-shadow: 0 2px 10px rgba(0, 86, 179, 0.1);
-            border-bottom: 3px solid var(--primary-blue);
-            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .navbar-brand {
             font-weight: 700;
-            color: var(--primary-blue) !important;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: #1a1a1a !important;
         }
 
-        .login-container {
+        /* CENTER CONTENT */
+        .login-content {
             flex: 1;
             display: flex;
             align-items: center;
@@ -51,162 +56,197 @@
             padding: 20px;
         }
 
-        /* --- UPDATED CARD: Removed blue border, kept strong shadow --- */
+        /* LOGIN CARD */
         .login-card {
-            background: #ffffff;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(25px) saturate(120%);
+            -webkit-backdrop-filter: blur(25px) saturate(120%);
             width: 100%;
-            max-width: 420px;
-            padding: 45px;
-            /* Border is now a faint neutral gray instead of blue */
-            border: 1px solid #eeeeee; 
-            /* Deeper shadow ensures visibility without the colored border */
-            box-shadow: 0 25px 50px rgba(0, 56, 179, 0.2); 
-        }
-
-        .login-header {
+            max-width: 364px;
+            padding: 35px 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
             text-align: center;
-            margin-bottom: 35px;
         }
 
-        .login-header .icon-box {
-            width: 70px;
-            height: 70px;
-            background: var(--accent-blue);
-            color: var(--primary-blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 2rem;
-            border: 1px solid var(--border-blue);
-        }
+        .login-error {
+    background: rgba(255, 0, 0, 0.08);
+    border: 1px solid rgba(255, 0, 0, 0.25);
+    color: #8b0000;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    animation: fadeIn 0.3s ease-in-out;
+}
 
-        .login-header h2 {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+        .login-card h3 {
             font-weight: 700;
-            font-size: 1.6rem;
-            color: var(--primary-blue);
+            color: #045980;
+            margin-bottom: 6px;
+        }
+
+        .login-card p {
+            color: #05505a;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        /* INPUTS */
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
         }
 
         .form-control {
-            height: 50px;
-            border-radius: 10px;
-            border: 1.5px solid var(--border-blue);
-            background-color: #fcfdff;
-            padding-left: 45px;
-            transition: all 0.2s ease-in-out;
+            background: rgba(255, 255, 255, 0.55) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #1a1a1a !important;
+            font-size: 15px;
+            transition: 0.3s;
         }
 
         .form-control:focus {
-            background-color: #ffffff;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
+            background: rgba(255, 255, 255, 0.8) !important;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.15) !important;
+            outline: none;
         }
 
-        .input-group-text {
-            background: transparent;
-            border: none;
-            position: absolute;
-            z-index: 10;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            padding-left: 15px;
-            color: var(--primary-blue);
+        .form-control::placeholder {
+            color: #777;
         }
 
-        .btn-hospital {
-            background-color: var(--primary-blue);
+        /* BUTTON */
+        .btn-login {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #fff;
             border: none;
-            color: white;
             padding: 14px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
             width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.25);
             transition: all 0.3s ease;
-            margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
         }
 
-        .btn-hospital:hover {
-            background-color: #004494;
+        .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 86, 179, 0.3);
+            box-shadow: 0 14px 28px rgba(79, 172, 254, 0.35);
         }
 
-        .form-footer {
+        /* FOOTER */
+        .card-footer-text {
             margin-top: 25px;
-            text-align: center;
+            font-size: 13px;
+            color: #444;
         }
 
-        .form-footer a {
-            color: var(--primary-blue);
-            text-decoration: none;
+        .card-footer-text a {
+            color: #007bff;
             font-weight: 600;
+            text-decoration: none;
         }
 
-        hr {
-            border-top: 1px solid var(--border-blue);
-            opacity: 0.5;
+        .card-footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* MOBILE FIX */
+        @media (max-width: 576px) {
+            html, body {
+                overflow: auto;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+<div class="main-wrapper">
+
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fa-solid fa-house-medical"></i> TakeCare
+                <i class="fa-solid fa-heart-pulse me-2"></i> TakeCare
             </a>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                </ul>
-            </div>
         </div>
     </nav>
 
-    <div class="login-container">
+    <div class="login-content">
         <div class="login-card">
-            <div class="login-header">
-                <div class="icon-box">
-                    <i class="fa-solid fa-user-shield"></i>
-                </div>
-                <h2>Patient Login</h2>
-                <p class="text-muted small">Access your medical records securely</p>
-            </div>
+
+            <h3><b>LOGIN</b></h3>
+            <p>Login to your patient account
+                          {% if messages %}
+  {% for message in messages %}
+    <div class="login-error">
+      <i class="fa-solid fa-circle-exclamation me-2"></i>
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+            </p>
+  
 
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-                <input type="hidden" name="next" value="{% url 'home' %}">
-                
-                <div class="mb-3 position-relative">
-                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                    <input type="text" name="username" class="form-control" placeholder="Email ID" required>
+
+                <div class="form-group">
+                    <label class="visually-hidden">Email</label>
+                    <input type="email" name="username" class="form-control"
+                           placeholder="Email Address" required>
                 </div>
 
-                <div class="mb-4 position-relative">
-                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                <div class="form-group">
+                    <label class="visually-hidden">Password</label>
+                    <input type="password" name="password" class="form-control"
+                           placeholder="Password" required>
                 </div>
 
-                <button type="submit" class="btn btn-hospital">
-                    <i class="fa-solid fa-unlock-keyhole me-2"></i> Sign In
-                </button>
+                <button type="submit" class="btn-login">Sign In</button>
             </form>
 
-            <div class="form-footer">
-                <a href="{% url 'password_reset' %}">Forgot Password?</a>
-                <hr class="my-3">
-                <p class="mb-1 text-muted">Don't have an account?</p>
-                <a href="{% url 'normal_user_page' %}" class="btn btn-outline-primary btn-sm w-100 mt-2 text-decoration-none" style="border-radius: 8px;">
-                    Create New Account
-                </a>
+            <div class="card-footer-text">
+                <a href="{% url 'password_reset' %}">Forgot password?</a>
+                <div class="mt-3">
+                    Don’t have an account?
+                    <a href="{% url 'normal_user_page' %}">Join us</a>
+                </div>
             </div>
+
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+<script>
+  setTimeout(() => {
+    const err = document.querySelector('.login-error');
+    if (err) err.style.display = 'none';
+  }, 3000);
+</script>
+
 </body>
 </html>

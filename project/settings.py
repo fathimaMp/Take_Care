@@ -67,6 +67,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'app.context_processors.cart_count',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -150,12 +151,18 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOGIN_URL = '/login/'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
+    
 
 LOGIN_REDIRECT_URL = '/seller/entry/'
 
 # Use the 'name' you gave your index/home URL in urls.py
 LOGIN_REDIRECT_URL = 'index'
+
+RAZORPAY_KEY_ID = "rzp_test_qrTILwvklytMvh"
+RAZORPAY_KEY_SECRET = "0eVlkIUIXxSUtummc10LNbhi"
 
 
 
