@@ -23,6 +23,11 @@
                 </div>
                 <span class="text-sm font-bold tracking-tight">TakeCare <span class="text-blue-600">Health</span></span>
             </div>
+            <div class="flex items-center gap-4">
+    <a href="{% url 'list_product' %}" class="text-xs font-semibold text-slate-600 hover:text-blue-600">
+        Products
+    </a>
+            
             <div class="relative">
                 <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-500"></i>
                 <span class="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[9px] w-3.5 h-3.5 flex items-center justify-center rounded-full font-bold">{{ cart_count }}</span>

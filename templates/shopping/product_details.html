@@ -3,68 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Portal | Inventory View</title>
+    <title>BlueCross | Product View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            /* Medical Background with Overlay */
+            background: linear-gradient(rgba(104, 167, 230, 0.85), rgba(196, 216, 235, 0.85)), 
+                        url('https://images.unsplash.com/photo-1581093458791-9f3c3250bb8b?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #334155;
+        }
+        .soft-card {
+            /* Enhanced Glassmorphism */
+            background: rgba(242, 245, 247, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 34px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+        }
+        .pill-button {
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .pill-button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .image-container {
+            /* Subtle transparency on the image side */
+            background: rgba(240, 249, 255, 0.4);
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f0f7ff; font-family: 'Segoe UI', Tahoma, sans-serif; color: #334e68;">
+<body class="min-h-screen py-12 px-6 flex items-center justify-center">
 
-    <header style="background: #ffffff; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid #dbeafe; position: sticky; top: 0; z-index: 1000;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="background: #60a5fa; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">+</div>
-            <span style="font-weight: 700; font-size: 20px; color: #1e3a8a; letter-spacing: -0.5px;">Blue<span style="color: #60a5fa;">Cross</span></span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="text-align: right;">
-                <div style="font-size: 13px; font-weight: 700; color: #466fde;">{{ user.username|default:"Staff_User" }}</div>
-            </div>
-            <div style="width: 40px; height: 40px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;"></div>
-        </div>
-    </header>
+    <div class="max-w-4xl w-full mx-auto">
+        <nav class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 px-2">
+            <a href="{% url 'list_product' %}" class="hover:text-blue-600 transition-colors" style="color: #1d4ed8;">Catalog</a>
+            <i data-lucide="chevron-right" class="w-3 h-3 opacity-50"></i>
+            <span class="text-blue-600/70">{{ product.category }}</span>
+        </nav>
 
-    <main style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
-        <div style="background: #ffffff; border-radius: 20px; display: flex; flex-wrap: wrap; overflow: hidden; border: 1px solid #e1eaf2; box-shadow: 0 10px 30px rgba(30, 58, 138, 0.04);">
-            
-            <div style="flex: 1; min-width: 350px; background: #fcfdfe; padding: 50px; display: flex; align-items: center; justify-content: center;">
-                <div style="background: #ffffff; padding: 20px; border-radius: 15px; border: 1px solid #f0f7ff;">
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; height: auto; border-radius: 10px;">
+        <div class="soft-card overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                
+                <div class="p-8 flex items-center justify-center image-container border-b md:border-b-0 md:border-r border-white/40">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                         class="max-h-[260px] w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-500 mix-blend-multiply">
+                </div>
+
+                <div class="p-8 md:p-10 flex flex-col justify-center">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-600 text-[10px] font-bold w-fit mb-4 border border-blue-200/50">
+                        <i data-lucide="shield-check" class="w-3 h-3"></i>
+                        CLINICAL SPECIFICATION
+                    </div>
+
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight mb-2">
+                        {{ product.name }}
+                    </h1>
+
+                    <div class="flex items-baseline gap-2 mb-6">
+                        <span class="text-xl font-bold text-slate-900">₹{{ product.price }}</span>
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Unit Price</span>
+                    </div>
+
+                    <p class="text-slate-500 leading-relaxed mb-3 text-sm">
+                        {{ product.description|default:"Professional healthcare equipment designed for precision and durability in clinical environments." }}
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <form action="{% url 'add_to_cart' product.id %}" method="POST" class="flex-1">
+                            {% csrf_token %}
+                            <button type="submit" class="pill-button w-full bg-blue-600 text-white py-3 px-6 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 active:scale-95">
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                Add to Order
+                            </button>
+                        </form>
+                        
+                        <a href="{% url 'list_product' %}" class="pill-button border border-slate-200 bg-white/50 text-slate-500 py-3 px-6 text-sm font-bold text-center hover:bg-white active:scale-95">
+                            Return
+                        </a>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/40 flex items-center gap-6">
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <i data-lucide="truck" class="w-3.5 h-3.5 opacity-60"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tighter">Fast Logistics</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <i data-lucide="package" class="w-3.5 h-3.5 opacity-60"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-tighter">Stock Verified</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div style="flex: 1.2; min-width: 350px; padding: 50px;"><br>
-                <span style="display: inline-block; background: #eff6ff; color: #3b82f6; font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 50px; margin-bottom: 20px; text-transform: uppercase;">
-                    Department: {{ product.category }}
-                </span>
-
-                <h1 style="margin: 0; font-size: 30px; color: #1e3a8a; font-weight: 700;">{{ product.name }}</h1>
-
-                <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 20px; font-weight: 650; color: #1e3a8a;">₹{{ product.price }}</span>
-                    <span style="color: #94a3b8; font-size: 14px;">/ per unit</span>
-                </div>
-
-                <div style="margin: 30px 0; border-top: 1px solid #f0f7ff; padding-top: 25px;">
-                    <p style="margin: 0; color: #475a7a; line-height: 1.8; font-size: 16px;">{{ product.description }}</p>
-                </div>
-
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    
-                    <form action="{% url 'add_to_cart' product.id %}" method="POST" style="flex: 2;">
-    {% csrf_token %}
-    <button type="submit" style="width: 100%; background: #3b82f6; color: white; padding: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none;">
-        Add to Cart
-    </button>
-</form>
-
-                    <a href="{% url 'home' %}" style="flex: 1; text-align: center; text-decoration: none; color: #60a5fa; background: #ffffff; border: 1px solid #dbeafe; padding: 18px; border-radius: 12px; font-weight: 700; font-size: 14px;">
-                        BACK
-                    </a>
-                </div>
-
-                <div style="margin-top: 30px; display: flex; gap: 20px; opacity: 0.6;">
-                    <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;">🛡️ SECURE SUPPLY</span>
-                    <span style="font-size: 11px; font-weight: 700; color: #1e3a8a;">✅ FDA COMPLIANT</span>
-                </div>
-            </div>
         </div>
-    </main>
+        
+        <div class="mt-4 px-2 flex justify-between items-center opacity-40">
+            <span class="text-[9px] font-bold uppercase tracking-widest">Medical Grade Product ID: #{{ product.id|default:"4829" }}</span>
+            <i data-lucide="activity" class="w-3 h-3"></i>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
